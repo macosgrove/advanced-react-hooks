@@ -32,6 +32,7 @@ function useAsync(asyncCallback, initialState, dependencies) {
     status: 'idle',
     data: null,
     error: null,
+    ...initialState
   })
 
   React.useEffect(() => {
@@ -54,12 +55,15 @@ function useAsync(asyncCallback, initialState, dependencies) {
 }
 
 function PokemonInfo({pokemonName}) {
-  const state = useAsync(() => {
-    if (!pokemonName) {
-      return
-    }
-    return fetchPokemon(pokemonName)
-  }, {/* initial state */}, [pokemonName])
+  const state = useAsync(
+      () => {
+        if (!pokemonName) {
+          return
+        }
+        return fetchPokemon(pokemonName)
+      },
+      {status: pokemonName ? 'pending' : 'idle'},
+      [pokemonName])
   const {data, status, error} = state
 
   switch (status) {
